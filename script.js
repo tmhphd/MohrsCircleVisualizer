@@ -128,6 +128,19 @@ function drawMohrCircle() {
         .attr('r', 5)
         .attr('fill', 'red');
 
+    const arcGenerator = d3.arc()
+        .innerRadius(0)
+        .outerRadius(xScale(radius)/1.5)
+        .startAngle(Math.PI/2-2*principalAngle)
+        .endAngle(Math.PI/2-2*principalAngle+2*angleRad);
+
+    svg.append('path')
+        .attr('d', arcGenerator)
+        .attr('fill', 'none')
+        .attr('stroke', 'black')
+        .attr('stroke-width', 1)
+        .attr('transform', `translate(${xScale(center)}, ${yScale(0)})`);
+
     updateLabels(sigmaXPrime, sigmaYPrime, tauXYPrime, center, radius, principalAngleDegrees);
 }
 
@@ -264,6 +277,34 @@ function drawStressElement() {
         drawArrow(x1, y1, x2, y2, 'green');
     });
 
+    svg.append('line')
+        .attr('x1', 0)
+        .attr('x2', rectSize/3)
+        .attr('y1', 0)
+        .attr('y2', 0)
+        .attr('stroke', 'black');
+
+
+        svg.append('line')
+        .attr('x1', 0)
+        .attr('x2', Math.cos(angleRad)*rectSize/3)
+        .attr('y1', 0)
+        .attr('y2', Math.sin(angleRad)*rectSize/3)
+        .attr('stroke', 'red');
+
+const arcGenerator = d3.arc()
+    .innerRadius(0)
+    .outerRadius(rectSize/5)
+    .startAngle(Math.PI/2)
+    .endAngle(Math.PI/2+angleRad);
+
+svg.append('path')
+    .attr('d', arcGenerator)
+    .attr('fill', 'none')
+    .attr('stroke', 'black')
+    .attr('stroke-width', 1)
+    .attr('transform', `translate(${xScale(center)}, ${yScale(0)})`);
+
     updateLabels(sigmaXPrime, sigmaYPrime, tauXYPrime, (sigmaX + sigmaY) / 2, Math.sqrt(Math.pow((sigmaX - sigmaY) / 2, 2) + Math.pow(tauXY, 2)), angle);
 }
 
@@ -313,18 +354,21 @@ function findPrincipalStresses() {
 }
 
 function updateLabels(sigmaXPrime, sigmaYPrime, tauXYPrime, center, radius, principalAngleDegrees) {
-    document.getElementById('sigmaXPrime').textContent = `σ'x: ${sigmaXPrime.toFixed(2)}`;
-    document.getElementById('sigmaYPrime').textContent = `σ'y: ${sigmaYPrime.toFixed(2)}`;
-    document.getElementById('tauXYPrime').textContent = `τ'xy: ${tauXYPrime.toFixed(2)}`;
+    document.getElementById('sigmaXPrime').textContent = `σx' = ${sigmaXPrime.toFixed(2)}`;
+    document.getElementById('sigmaYPrime').textContent = `σy' = ${sigmaYPrime.toFixed(2)}`;
+    document.getElementById('tauXYPrime').textContent = `τxy' = ${tauXYPrime.toFixed(2)}`;
 
     const sigma1 = center + radius;
     const sigma2 = center - radius;
     const tauMax = radius;
 
 
-    document.getElementById('sigma1').textContent = `σ1: ${sigma1.toFixed(2)}`;
-    document.getElementById('sigma2').textContent = `σ2: ${sigma2.toFixed(2)}`;
-    document.getElementById('tauMax').textContent = `τmax: ${tauMax.toFixed(2)}`;
+    document.getElementById('sigma1').textContent = `σ1 = ${sigma1.toFixed(2)}`;
+    document.getElementById('sigma2').textContent = `σ2 = ${sigma2.toFixed(2)}`;
+    document.getElementById('tauMax').textContent = `τmax = ${tauMax.toFixed(2)}`;
 
-    document.getElementById('principalAngle').textContent = `Current Angle: ${principalAngleDegrees.toFixed(2)}°`;
+    document.getElementById('AngleLabel').textContent = `Current Angle:`;
+    document.getElementById('principalAngle').textContent = `θ = ${principalAngleDegrees.toFixed(2)}°`;
+    document.getElementById('TwoPrincipalAngle').textContent = `2θ = ${2*principalAngleDegrees.toFixed(2)}°`;
+
 }
